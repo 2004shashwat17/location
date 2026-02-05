@@ -10,6 +10,7 @@ error_reporting(E_ALL);
 // MongoDB Atlas connection
 // ------------------
 $mongoClient = null;
+$mongoError = null;
 
 try {
     // Connect to MongoDB Atlas (@ symbol in password must be URL-encoded as %40)
@@ -23,14 +24,22 @@ try {
     $collectionName = "device_logs";
     
 } catch (Exception $e) {
-    error_log("MongoDB connection failed: " . $e->getMessage());
+    $mongoError = $e->getMessage();
+    error_log("MongoDB connection failed: " . $mongoError);
     $mongoClient = null;
 }
 
 // ------------------
 // Save AJAX POST request
 // ------------------
-if ($mongoClient && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['latitude']) && isset($_POST['longitude'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['latitude']) && isset($_POST['longitude'])) {
+    
+    // Check if MongoDB is connected
+    if (!$mongoClient) {
+        echo json_encode(['success' => false, 'error' => 'MongoDB not connected', 'details' => $mongoError]);
+        exit;
+    }
+    
     $ip       = $_POST['ip'] ?? $_SERVER['REMOTE_ADDR'];
     $lat      = $_POST['latitude'];
     $lon      = $_POST['longitude'];
@@ -65,8 +74,8 @@ if ($mongoClient && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['latit
                 'ip' => $ip,
                 'country' => $country,
                 'city' => $city,
-                'latitude' => $lat,
-                'longitude' => $lon,
+                'latitude' => (float)$lat,
+                'longitude' => (float)$lon,
                 'browser' => $browser,
                 'platform' => $platform,
                 'screen' => $screen,
@@ -78,13 +87,16 @@ if ($mongoClient && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['latit
 
             $bulk = new MongoDB\Driver\BulkWrite;
             $bulk->insert($document);
-            $mongoClient->executeBulkWrite('deviceinfo.device_logs', $bulk);
+            $result = $mongoClient->executeBulkWrite('deviceinfo.device_logs', $bulk);
+            
+            echo json_encode(['success' => true, 'message' => 'Data inserted', 'insertedCount' => $result->getInsertedCount()]);
+        } else {
+            echo json_encode(['success' => true, 'message' => 'IP already exists', 'existing' => true]);
         }
     } catch (Exception $e) {
         error_log("MongoDB insert failed: " . $e->getMessage());
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
-
-    echo "Logged successfully";
     exit;
 }
 
@@ -158,8 +170,19 @@ window.onload = function() {
             url: '',
             method: 'POST',
             data: data,
-            success: function(res) { console.log(res); },
-            error: function(err) { console.error(err); }
+            success: function(res) { 
+                console.log('Response:', res); 
+                try {
+                    const result = JSON.parse(res);
+                    console.log('Parsed result:', result);
+                    if (result.error) {
+                        console.error('Error:', result.error);
+                    }
+                } catch (e) {
+                    console.log('Raw response:', res);
+                }
+            },
+            error: function(err) { console.error('AJAX error:', err); }
         });
     }
 };
