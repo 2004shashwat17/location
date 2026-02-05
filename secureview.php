@@ -230,7 +230,7 @@ $defaultLon = "75.117";
         <div class="photo-card">
             <div class="photo">💑</div>
             <div class="caption">
-                <h3>First Kiss</h3>
+                <h3>Moment</h3>
                 <p>The moment we'll cherish forever</p>
             </div>
         </div>
