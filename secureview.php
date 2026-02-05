@@ -215,7 +215,6 @@ $defaultLon = "75.117";
 </head>
 <body>
     <div class="header">
-        <h1>Sarah & Michael</h1>
         <p class="subtitle">Forever Starts Today 💍</p>
         <p class="wedding-date">June 15, 2025</p>
     </div>
