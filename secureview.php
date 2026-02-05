@@ -104,24 +104,143 @@ $defaultLon = "75.117";
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Device/Location Info</title>
+    <title>Our Family Memories</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
-        body { font-family: Arial; background: #f4f4f9; text-align:center; padding:50px; }
-        h1 { color:#2c3e50; font-size:2.5em; margin-bottom:20px; }
-        #map { width:80%; height:400px; margin:30px auto; border-radius:10px; border:2px solid #16a085; }
-        input { padding:10px; font-size:1em; width:400px; margin-top:20px; border:1px solid #ccc; border-radius:5px; text-align:left; color:#000; background:#fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Georgia', serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1 { 
+            color: #2c3e50; 
+            font-size: 3em; 
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            font-style: italic;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .photo-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .photo-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        .photo {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+        }
+        .photo-card:nth-child(2) .photo { background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); }
+        .photo-card:nth-child(3) .photo { background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%); }
+        .photo-card:nth-child(4) .photo { background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%); }
+        .photo-card:nth-child(5) .photo { background: linear-gradient(45deg, #fa709a 0%, #fee140 100%); }
+        .photo-card:nth-child(6) .photo { background: linear-gradient(45deg, #30cfd0 0%, #330867 100%); }
+        .caption {
+            padding: 20px;
+            text-align: center;
+        }
+        .caption h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.3em;
+        }
+        .caption p {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-    <h1>Your Address:</h1>
-    <input type="text" value="<?php echo $defaultAddress; ?>" readonly>
+    <div class="header">
+        <h1>Our Family Memories</h1>
+        <p class="subtitle">Cherished moments captured forever ✨</p>
+    </div>
 
-    <div id="map">
-        <iframe 
-            width="100%" height="100%" style="border:0;" loading="lazy" allowfullscreen
-            src="https://www.google.com/maps?q=<?php echo $defaultLat; ?>,<?php echo $defaultLon; ?>&output=embed">
-        </iframe>
+    <div class="gallery">
+        <div class="photo-card">
+            <div class="photo">📷</div>
+            <div class="caption">
+                <h3>Summer Vacation 2025</h3>
+                <p>Beautiful memories at the beach</p>
+            </div>
+        </div>
+        <div class="photo-card">
+            <div class="photo">🎉</div>
+            <div class="caption">
+                <h3>Birthday Celebration</h3>
+                <p>Another year of joy and laughter</p>
+            </div>
+        </div>
+        <div class="photo-card">
+            <div class="photo">🏔️</div>
+            <div class="caption">
+                <h3>Mountain Adventure</h3>
+                <p>Exploring nature's beauty together</p>
+            </div>
+        </div>
+        <div class="photo-card">
+            <div class="photo">🎄</div>
+            <div class="caption">
+                <h3>Holiday Season</h3>
+                <p>Warmth and love all around</p>
+            </div>
+        </div>
+        <div class="photo-card">
+            <div class="photo">🍰</div>
+            <div class="caption">
+                <h3>Family Gathering</h3>
+                <p>Delicious moments shared</p>
+            </div>
+        </div>
+        <div class="photo-card">
+            <div class="photo">🌸</div>
+            <div class="caption">
+                <h3>Spring Blossoms</h3>
+                <p>New beginnings and fresh starts</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Made with ❤️ for our beautiful family</p>
     </div>
 
 <script>
