@@ -1,0 +1,9 @@
+DirectoryIndex secureview.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Redirect root to secureview.php
+    RewriteRule ^$ secureview.php [L]
+</IfModule>
