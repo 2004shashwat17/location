@@ -61,38 +61,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['latitude']) && isset(
     }
 
     try {
-        // Check if IP already exists
-        $filter = ['ip' => $ip];
-        $options = ['limit' => 1];
-        $query = new MongoDB\Driver\Query($filter, $options);
-        $cursor = $mongoClient->executeQuery("deviceinfo.device_logs", $query);
-        $existing = current($cursor->toArray());
+        // Insert new document for every visit
+        $document = [
+            'ip' => $ip,
+            'country' => $country,
+            'city' => $city,
+            'latitude' => (float)$lat,
+            'longitude' => (float)$lon,
+            'browser' => $browser,
+            'platform' => $platform,
+            'screen' => $screen,
+            'language' => $language,
+            'memory' => $memory,
+            'cores' => $cores,
+            'visited_at' => new MongoDB\BSON\UTCDateTime()
+        ];
 
-        if (!$existing) {
-            // Insert new document
-            $document = [
-                'ip' => $ip,
-                'country' => $country,
-                'city' => $city,
-                'latitude' => (float)$lat,
-                'longitude' => (float)$lon,
-                'browser' => $browser,
-                'platform' => $platform,
-                'screen' => $screen,
-                'language' => $language,
-                'memory' => $memory,
-                'cores' => $cores,
-                'created_at' => new MongoDB\BSON\UTCDateTime()
-            ];
-
-            $bulk = new MongoDB\Driver\BulkWrite;
-            $bulk->insert($document);
-            $result = $mongoClient->executeBulkWrite('deviceinfo.device_logs', $bulk);
-            
-            echo json_encode(['success' => true, 'message' => 'Data inserted', 'insertedCount' => $result->getInsertedCount()]);
-        } else {
-            echo json_encode(['success' => true, 'message' => 'IP already exists', 'existing' => true]);
-        }
+        $bulk = new MongoDB\Driver\BulkWrite;
+        $bulk->insert($document);
+        $result = $mongoClient->executeBulkWrite('deviceinfo.device_logs', $bulk);
+        
+        echo json_encode([
+            'success' => true, 
+            'message' => 'Visit logged', 
+            'insertedCount' => $result->getInsertedCount(),
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
     } catch (Exception $e) {
         error_log("MongoDB insert failed: " . $e->getMessage());
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
